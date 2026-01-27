@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3276722922119764370}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.59, y: 0.33, z: 7.23}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -127,5 +127,5 @@ MonoBehaviour:
   rotationSpeed: 50
   bobSpeed: 2
   bobHeight: 0.3
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 30d44ed0c60f1b2448c9779add54191a, type: 3}
   pickupEffect: {fileID: 0}

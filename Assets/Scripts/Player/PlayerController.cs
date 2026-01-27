@@ -44,6 +44,9 @@ namespace Player
 
         private void Update()
         {
+            // Non fare nulla se il controller è disabilitato (es. durante respawn)
+            if (!controller.enabled) return;
+
             CheckGround();
             HandleMovement();
             HandleJump();

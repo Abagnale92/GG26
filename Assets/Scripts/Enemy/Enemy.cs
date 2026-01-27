@@ -29,6 +29,13 @@ namespace Enemies
             {
                 originalColor = enemyRenderer.material.color;
             }
+
+            // Configura il Rigidbody per evitare che il nemico cada o si inclini
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+            }
         }
 
         /// <summary>
