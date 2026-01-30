@@ -20,11 +20,20 @@ namespace Player
         [Header("Camera")]
         [SerializeField] private Transform cameraTransform;
 
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+
         private CharacterController controller;
         private MaskManager maskManager;
         private Vector3 velocity;
         private bool isGrounded;
         private int jumpCount = 0;
+        private float currentSpeed;
+
+        // Animator parameter hashes (per performance)
+        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
 
         public bool IsGrounded => isGrounded;
         public Vector3 Velocity => velocity;
@@ -40,6 +49,12 @@ namespace Player
             {
                 cameraTransform = Camera.main?.transform;
             }
+
+            // Se non assegnato, cerca l'Animator nei figli
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
         }
 
         private void Update()
@@ -53,6 +68,7 @@ namespace Player
             ApplyGravity();
             HandleMaskSwitch();
             HandleAbilityInput();
+            UpdateAnimator();
         }
 
         private void CheckGround()
@@ -99,6 +115,13 @@ namespace Player
 
                 // Muovi il player
                 controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+                // Aggiorna la velocità per l'animazione
+                currentSpeed = inputDirection.magnitude * moveSpeed;
+            }
+            else
+            {
+                currentSpeed = 0f;
             }
         }
 
@@ -112,6 +135,12 @@ namespace Player
                 {
                     velocity.y = jumpForce;
                     jumpCount++;
+
+                    // Trigger animazione salto
+                    if (animator != null)
+                    {
+                        animator.SetTrigger(JumpHash);
+                    }
                 }
             }
         }
@@ -162,6 +191,20 @@ namespace Player
             {
                 maskManager?.CurrentAbility?.UseAbility();
             }
+        }
+
+        /// <summary>
+        /// Aggiorna i parametri dell'Animator in base allo stato del player
+        /// </summary>
+        private void UpdateAnimator()
+        {
+            if (animator == null) return;
+
+            // Aggiorna velocità (per blend tra Idle e Walk/Run)
+            animator.SetFloat(SpeedHash, currentSpeed);
+
+            // Aggiorna stato a terra
+            animator.SetBool(IsGroundedHash, isGrounded);
         }
 
         private void OnDrawGizmosSelected()
