@@ -23,6 +23,8 @@ namespace Enemies
 
         private Transform player;
         private float lastFireTime;
+        private Enemy enemyComponent;
+        private Animator animator;
 
         private void Start()
         {
@@ -38,11 +40,21 @@ namespace Enemies
             {
                 firePoint = transform;
             }
+
+            // Ottieni riferimento al componente Enemy
+            enemyComponent = GetComponent<Enemy>();
+
+            // Ottieni l'Animator (può essere su questo oggetto o su un figlio)
+            // Il nemico ranged usa solo l'animazione Idle di default
+            animator = GetComponentInChildren<Animator>();
         }
 
         private void Update()
         {
             if (player == null) return;
+
+            // Non fare nulla se il nemico è morto
+            if (enemyComponent != null && enemyComponent.IsDead) return;
 
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 

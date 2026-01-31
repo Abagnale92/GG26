@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using Checkpoints;
+using Enemies;
 
 namespace Player
 {
@@ -17,13 +18,24 @@ namespace Player
         [SerializeField] private float flashDuration = 0.1f;
         [SerializeField] private Color damageColor = Color.red;
 
+        [Header("Respawn Settings")]
+        [SerializeField] private float respawnDelay = 1.5f; // Tempo prima del respawn (dopo la morte)
+
         private int currentHealth;
         private bool isInvincible = false;
         private Renderer playerRenderer;
         private Color originalColor;
+        private Animator animator;
+
+        // Animator parameter hash
+        private static readonly int DieHash = Animator.StringToHash("Die");
+        private static readonly int RespawnHash = Animator.StringToHash("Respawn");
 
         // Riferimento al checkpoint manager
         private CheckpointManager checkpointManager;
+
+        // Riferimento al MaskManager per rimuovere la maschera alla morte
+        private MaskManager maskManager;
 
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
@@ -47,12 +59,18 @@ namespace Player
             {
                 originalColor = playerRenderer.material.color;
             }
+
+            // Trova l'Animator
+            animator = GetComponentInChildren<Animator>();
         }
 
         private void Start()
         {
             // Trova il checkpoint manager
             checkpointManager = FindFirstObjectByType<CheckpointManager>();
+
+            // Trova il MaskManager
+            maskManager = GetComponent<MaskManager>();
         }
 
         /// <summary>
@@ -102,8 +120,36 @@ namespace Player
             Debug.Log("Player morto!");
             OnPlayerDeath?.Invoke();
 
-            // Respawn dopo un breve delay
-            StartCoroutine(RespawnAfterDelay(1f));
+            // Avvia animazione di morte
+            if (animator != null)
+            {
+                animator.SetTrigger(DieHash);
+            }
+
+            // Rimuovi la maschera visivamente
+            if (maskManager != null)
+            {
+                maskManager.RemoveMask();
+            }
+
+            // Respawn dopo il delay configurato
+            StartCoroutine(RespawnAfterDelay(respawnDelay));
+        }
+
+        /// <summary>
+        /// Resetta tutti i nemici vivi alla posizione iniziale
+        /// </summary>
+        private void ResetAllEnemies()
+        {
+            // Trova tutti i nemici nella scena e resettali
+            Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+            foreach (var enemy in enemies)
+            {
+                if (enemy != null)
+                {
+                    enemy.ResetToInitialPosition();
+                }
+            }
         }
 
         private System.Collections.IEnumerator RespawnAfterDelay(float delay)
@@ -139,6 +185,15 @@ namespace Player
             {
                 controller.enabled = true;
             }
+
+            // Trigger animazione respawn (torna a Idle)
+            if (animator != null)
+            {
+                animator.SetTrigger(RespawnHash);
+            }
+
+            // Resetta i nemici DOPO il respawn del player
+            ResetAllEnemies();
 
             Debug.Log("Player respawnato!");
             OnPlayerRespawn?.Invoke();

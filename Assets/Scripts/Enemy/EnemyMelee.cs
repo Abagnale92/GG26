@@ -24,6 +24,12 @@ namespace Enemies
         private Transform player;
         private float lastAttackTime;
         private bool isChasing = false;
+        private Enemy enemyComponent;
+        private Animator animator;
+
+        // Animator parameter hashes
+        private static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
+        private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
 
         private void Start()
         {
@@ -33,11 +39,20 @@ namespace Enemies
             {
                 player = playerObj.transform;
             }
+
+            // Ottieni riferimento al componente Enemy
+            enemyComponent = GetComponent<Enemy>();
+
+            // Ottieni l'Animator (può essere su questo oggetto o su un figlio)
+            animator = GetComponentInChildren<Animator>();
         }
 
         private void Update()
         {
             if (player == null) return;
+
+            // Non fare nulla se il nemico è morto
+            if (enemyComponent != null && enemyComponent.IsDead) return;
 
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -49,17 +64,40 @@ namespace Enemies
                 // Se nel range d'attacco, attacca
                 if (distanceToPlayer <= attackRange)
                 {
+                    // Fermo mentre attacca
+                    SetWalking(false);
+                    SetAttacking(true);
                     TryAttack();
                 }
                 else
                 {
                     // Altrimenti insegui
+                    SetAttacking(false);
+                    SetWalking(true);
                     ChasePlayer();
                 }
             }
             else
             {
                 isChasing = false;
+                SetWalking(false);
+                SetAttacking(false);
+            }
+        }
+
+        private void SetWalking(bool walking)
+        {
+            if (animator != null)
+            {
+                animator.SetBool(IsWalkingHash, walking);
+            }
+        }
+
+        private void SetAttacking(bool attacking)
+        {
+            if (animator != null)
+            {
+                animator.SetBool(IsAttackingHash, attacking);
             }
         }
 

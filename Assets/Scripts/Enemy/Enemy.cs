@@ -17,18 +17,27 @@ namespace Enemies
         private int currentHits = 0;
         private Renderer enemyRenderer;
         private Color originalColor;
+        private Vector3 initialPosition;
+        private Quaternion initialRotation;
+        private bool isDead = false;
 
         public int HitsToKill => hitsToKill;
         public int CurrentHits => currentHits;
         public int RemainingHits => hitsToKill - currentHits;
+        public bool IsDead => isDead;
 
         private void Awake()
         {
-            enemyRenderer = GetComponent<Renderer>();
+            // Cerca il Renderer anche nei figli (per modelli FBX con SkinnedMeshRenderer)
+            enemyRenderer = GetComponentInChildren<Renderer>();
             if (enemyRenderer != null)
             {
                 originalColor = enemyRenderer.material.color;
             }
+
+            // Salva la posizione e rotazione iniziale
+            initialPosition = transform.position;
+            initialRotation = transform.rotation;
 
             // Configura il Rigidbody per evitare che il nemico cada o si inclini
             Rigidbody rb = GetComponent<Rigidbody>();
@@ -43,6 +52,8 @@ namespace Enemies
         /// </summary>
         public void TakeHit()
         {
+            if (isDead) return;
+
             currentHits++;
             Debug.Log($"{gameObject.name} colpito! Colpi: {currentHits}/{hitsToKill}");
 
@@ -77,7 +88,10 @@ namespace Enemies
         private void Die()
         {
             Debug.Log($"{gameObject.name} sconfitto!");
-            Destroy(gameObject);
+            isDead = true;
+
+            // Disabilita il nemico invece di distruggerlo
+            gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -86,6 +100,30 @@ namespace Enemies
         public void ResetHits()
         {
             currentHits = 0;
+        }
+
+        /// <summary>
+        /// Resetta il nemico alla posizione iniziale (se non è morto)
+        /// </summary>
+        public void ResetToInitialPosition()
+        {
+            // Se il nemico è morto, non fare nulla (resta morto)
+            if (isDead) return;
+
+            // Resetta posizione e rotazione
+            transform.position = initialPosition;
+            transform.rotation = initialRotation;
+
+            // Resetta i colpi subiti
+            currentHits = 0;
+
+            // Resetta il colore se necessario
+            if (enemyRenderer != null)
+            {
+                enemyRenderer.material.color = originalColor;
+            }
+
+            Debug.Log($"{gameObject.name} resettato alla posizione iniziale");
         }
     }
 }
