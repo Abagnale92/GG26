@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7146180809051305576
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.01
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.26
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.38268343
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      propertyPath: m_Name
+      value: Cartello
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8164078558771037576, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 646984711196237759}
+    - targetCorrespondingSourceObject: {fileID: 8164078558771037576, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2108208221849328798}
+  m_SourcePrefab: {fileID: 100100000, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+--- !u!1 &1324330577915622368 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+  m_PrefabInstance: {fileID: 7146180809051305576}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &646984711196237759
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324330577915622368}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2432090755550338912, guid: 761693acf3bf6ff46aff8a4cc0de1488, type: 3}
+--- !u!114 &2108208221849328798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324330577915622368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f225d878086ceeb4894e9f073fe064e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 3
+  interactKey: 102
+  dialogueLines:
+  - "Premi WASD o le freccie direzionali per camminare, ma forse l'avevi intuito
+    gi\xE0..."
+  textDisplayTime: 3
+  givesItem: 0
+  itemToGive: {fileID: 0}
+  itemSpawnOffset: {x: 1, y: 0, z: 0}
+  npcName: 
+  voiceSound: {fileID: 0}
+  interactionPrompt: {fileID: 0}
+  dialogueUI: {fileID: 0}
+  dialogueText: {fileID: 0}
+  npcNameText: {fileID: 0}

@@ -10,6 +10,8 @@ TagManager:
   - Checkpoint
   - DamageZone
   - LethalZone
+  - InvisibleEnemy
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

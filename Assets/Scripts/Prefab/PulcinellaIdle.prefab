@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6617363531314297105
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -43.851593
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.97999954
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 49.23658
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.49999994
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.86602545
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      propertyPath: m_Name
+      value: PulcinellaIdle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1666618700938636562}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5135825273733458246}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3621507667292112302}
+  m_SourcePrefab: {fileID: 100100000, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+--- !u!1 &6274904904055243840 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+  m_PrefabInstance: {fileID: 6617363531314297105}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1666618700938636562
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6274904904055243840}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 9193d92673171bf46b8cf65dd422dde2, type: 3}
+  m_Controller: {fileID: 9100000, guid: 8c94f289883544740b93d011f8e0123a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5135825273733458246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6274904904055243840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f225d878086ceeb4894e9f073fe064e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 3
+  interactKey: 102
+  dialogueLines:
+  - Mamma mia Terenzio!
+  - "Ma nd\xF2 sfaccimma ta menato chillu fetenton e Tartaglia?"
+  - "Sta foresta oscur, luntan r\xE0 Citt\xE0, ro Sol, st'acq scur, gent brutt assaj"
+  - "Ho visto l'accaduto e comm na catapult so venut c\xE0 pe t'aiut\xE0"
+  - "Questo luogo \xE8 pieno di pericoli, cose che co l'uocchj tuoj nu pu\xF2 ver\xE8"
+  - "Prendi la mia maschera, ti aiuter\xE0 a proseguire il cammino"
+  - Quando la indossi tieni premuto il tasto E e potrai vedere con i miei occhi
+  textDisplayTime: 3
+  givesItem: 1
+  itemToGive: {fileID: 1325316231785082875, guid: d93faaf92003ffd46983fc2a4a283219, type: 3}
+  itemSpawnOffset: {x: 3, y: 2, z: 0}
+  npcName: Pulcinella
+  voiceSound: {fileID: 8300000, guid: aa896c444496a074fb0dca0226eb948f, type: 3}
+  interactionPrompt: {fileID: 0}
+  dialogueUI: {fileID: 0}
+  dialogueText: {fileID: 0}
+  npcNameText: {fileID: 0}
+--- !u!65 &3621507667292112302
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6274904904055243840}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 3, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}

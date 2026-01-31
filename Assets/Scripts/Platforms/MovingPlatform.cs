@@ -11,12 +11,15 @@ namespace Platforms
     {
         public enum MoveDirection
         {
-            Horizontal,
-            Vertical
+            Horizontal,  // Destra/Sinistra (asse X)
+            Vertical,    // Su/Giù (asse Y)
+            Forward      // Avanti/Indietro (asse Z)
         }
 
         [Header("Movement Settings")]
         [SerializeField] private MoveDirection direction = MoveDirection.Horizontal;
+        [Tooltip("Se attivo, inverte la direzione (Sinistra invece di Destra, Giù invece di Su, Indietro invece di Avanti)")]
+        [SerializeField] private bool invertDirection = false;
         [SerializeField] private float moveDistance = 5f;
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float waitTime = 0.5f;
@@ -39,18 +42,28 @@ namespace Platforms
         {
             startPosition = transform.position;
 
-            if (direction == MoveDirection.Horizontal)
-            {
-                endPosition = startPosition + Vector3.right * moveDistance;
-            }
-            else
-            {
-                endPosition = startPosition + Vector3.up * moveDistance;
-            }
+            // Calcola il vettore direzione in base alle impostazioni
+            Vector3 moveVector = GetMoveVector();
+            endPosition = startPosition + moveVector * moveDistance;
 
             targetPosition = endPosition;
             isMoving = startMovingOnAwake;
             lastPosition = transform.position;
+        }
+
+        private Vector3 GetMoveVector()
+        {
+            switch (direction)
+            {
+                case MoveDirection.Horizontal:
+                    return invertDirection ? Vector3.left : Vector3.right;
+                case MoveDirection.Vertical:
+                    return invertDirection ? Vector3.down : Vector3.up;
+                case MoveDirection.Forward:
+                    return invertDirection ? Vector3.back : Vector3.forward;
+                default:
+                    return Vector3.right;
+            }
         }
 
         private void Update()
@@ -145,21 +158,33 @@ namespace Platforms
         private void OnDrawGizmos()
         {
             Vector3 start = Application.isPlaying ? startPosition : transform.position;
-            Vector3 end;
-
-            if (direction == MoveDirection.Horizontal)
-            {
-                end = start + Vector3.right * moveDistance;
-            }
-            else
-            {
-                end = start + Vector3.up * moveDistance;
-            }
+            Vector3 moveVector = GetMoveVectorForGizmos();
+            Vector3 end = start + moveVector * moveDistance;
 
             Gizmos.color = Color.green;
             Gizmos.DrawLine(start, end);
             Gizmos.DrawWireSphere(start, 0.3f);
             Gizmos.DrawWireSphere(end, 0.3f);
+
+            // Punto centrale
+            Gizmos.color = Color.yellow;
+            Vector3 midPoint = (start + end) / 2f;
+            Gizmos.DrawSphere(midPoint, 0.15f);
+        }
+
+        private Vector3 GetMoveVectorForGizmos()
+        {
+            switch (direction)
+            {
+                case MoveDirection.Horizontal:
+                    return invertDirection ? Vector3.left : Vector3.right;
+                case MoveDirection.Vertical:
+                    return invertDirection ? Vector3.down : Vector3.up;
+                case MoveDirection.Forward:
+                    return invertDirection ? Vector3.back : Vector3.forward;
+                default:
+                    return Vector3.right;
+            }
         }
     }
 }

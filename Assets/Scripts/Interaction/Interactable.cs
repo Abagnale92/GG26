@@ -22,10 +22,15 @@ namespace Interaction
         [SerializeField] private GameObject itemToGive;
         [SerializeField] private Vector3 itemSpawnOffset = new Vector3(1f, 0f, 0f);
 
+        [Header("NPC Settings")]
+        [SerializeField] private string npcName; // Nome del personaggio (opzionale)
+        [SerializeField] private AudioClip voiceSound; // Suono della voce quando parla
+
         [Header("Visual Feedback")]
         [SerializeField] private GameObject interactionPrompt; // UI che mostra "Premi F"
         [SerializeField] private GameObject dialogueUI; // UI per il testo
-        [SerializeField] private TMPro.TextMeshProUGUI dialogueText; // Riferimento al testo UI
+        [SerializeField] private TMPro.TextMeshProUGUI dialogueText; // Riferimento al testo dialogo
+        [SerializeField] private TMPro.TextMeshProUGUI npcNameText; // Riferimento al testo nome NPC
 
         private Transform player;
         private bool isPlayerInRange = false;
@@ -33,6 +38,7 @@ namespace Interaction
         private int currentLineIndex = 0;
         private bool hasGivenItem = false;
         private float lineTimer = 0f;
+        private AudioSource audioSource;
 
         public event Action OnDialogueStarted;
         public event Action OnDialogueEnded;
@@ -55,6 +61,14 @@ namespace Interaction
             if (dialogueUI != null)
             {
                 dialogueUI.SetActive(false);
+            }
+
+            // Configura AudioSource per la voce
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null && voiceSound != null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
             }
         }
 
@@ -129,8 +143,25 @@ namespace Interaction
                 dialogueUI.SetActive(true);
             }
 
+            // Mostra il nome dell'NPC se configurato
+            if (npcNameText != null)
+            {
+                npcNameText.text = !string.IsNullOrEmpty(npcName) ? npcName : "";
+            }
+
+            // Riproduci suono della voce
+            PlayVoiceSound();
+
             OnDialogueStarted?.Invoke();
             ShowCurrentLine();
+        }
+
+        private void PlayVoiceSound()
+        {
+            if (voiceSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(voiceSound);
+            }
         }
 
         private void ShowCurrentLine()

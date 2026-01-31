@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerHealth: {fileID: 0}
-  heartsContainer: {fileID: 0}
+  heartsContainer: {fileID: 4490083303604270897, guid: 6309165a54c16674fa13ed75d74f4496, type: 3}
   heartPrefab: {fileID: 7599344496733838134, guid: 6309165a54c16674fa13ed75d74f4496, type: 3}
   heartFull: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   heartEmpty: {fileID: 0}

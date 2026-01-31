@@ -26,6 +26,13 @@ namespace Player
         [SerializeField] private AudioClip capitanoMaskSound;
         [SerializeField] private AudioClip removeMaskSound;
 
+        [Header("Maschere Sbloccate di Default")]
+        [Tooltip("Maschere già sbloccate all'inizio della scena")]
+        [SerializeField] private bool startWithPulcinella = false;
+        [SerializeField] private bool startWithArlecchino = false;
+        [SerializeField] private bool startWithColombina = false;
+        [SerializeField] private bool startWithCapitano = false;
+
         [Header("Debug")]
         [SerializeField] private MaskType currentMaskType = MaskType.None;
 
@@ -58,6 +65,36 @@ namespace Player
             {
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.playOnAwake = false;
+            }
+
+            // Sblocca le maschere di default
+            UnlockDefaultMasks();
+        }
+
+        /// <summary>
+        /// Sblocca le maschere impostate come default nell'Inspector
+        /// </summary>
+        private void UnlockDefaultMasks()
+        {
+            if (startWithPulcinella)
+            {
+                unlockedMasks.Add(MaskType.Pulcinella);
+                Debug.Log("Maschera Pulcinella sbloccata di default");
+            }
+            if (startWithArlecchino)
+            {
+                unlockedMasks.Add(MaskType.Arlecchino);
+                Debug.Log("Maschera Arlecchino sbloccata di default");
+            }
+            if (startWithColombina)
+            {
+                unlockedMasks.Add(MaskType.Colombina);
+                Debug.Log("Maschera Colombina sbloccata di default");
+            }
+            if (startWithCapitano)
+            {
+                unlockedMasks.Add(MaskType.Capitano);
+                Debug.Log("Maschera Capitano sbloccata di default");
             }
         }
 
