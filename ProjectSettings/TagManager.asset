@@ -12,6 +12,7 @@ TagManager:
   - LethalZone
   - InvisibleEnemy
   - SpawnPoint
+  - Boss
   layers:
   - Default
   - TransparentFX

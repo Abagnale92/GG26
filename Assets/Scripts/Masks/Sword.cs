@@ -13,9 +13,11 @@ namespace Masks
     {
         [Header("Settings")]
         [SerializeField] private string enemyTag = "Enemy";
+        [SerializeField] private string bossTag = "Boss";
 
         // Lista dei nemici già colpiti in questo attacco (evita colpi multipli)
         private HashSet<Enemy> hitEnemiesThisSwing = new HashSet<Enemy>();
+        private HashSet<Boss> hitBossesThisSwing = new HashSet<Boss>();
 
         private void Awake()
         {
@@ -31,13 +33,25 @@ namespace Masks
         {
             // Reset della lista quando la spada viene attivata per un nuovo attacco
             hitEnemiesThisSwing.Clear();
+            hitBossesThisSwing.Clear();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            // Controlla se è un nemico
-            if (!other.CompareTag(enemyTag)) return;
+            // Controlla se è un nemico normale
+            if (other.CompareTag(enemyTag))
+            {
+                HandleEnemyHit(other);
+            }
+            // Controlla se è il Boss
+            else if (other.CompareTag(bossTag))
+            {
+                HandleBossHit(other);
+            }
+        }
 
+        private void HandleEnemyHit(Collider other)
+        {
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy == null)
             {
@@ -54,12 +68,31 @@ namespace Masks
             }
         }
 
+        private void HandleBossHit(Collider other)
+        {
+            Boss boss = other.GetComponent<Boss>();
+            if (boss == null)
+            {
+                boss = other.GetComponentInParent<Boss>();
+            }
+
+            if (boss != null && !hitBossesThisSwing.Contains(boss))
+            {
+                // Segna il boss come colpito in questo swing
+                hitBossesThisSwing.Add(boss);
+
+                // Infliggi il colpo
+                boss.TakeHit();
+            }
+        }
+
         /// <summary>
         /// Resetta la lista dei nemici colpiti (chiamato all'inizio di ogni attacco)
         /// </summary>
         public void ResetHitList()
         {
             hitEnemiesThisSwing.Clear();
+            hitBossesThisSwing.Clear();
         }
     }
 }

@@ -15,7 +15,11 @@ namespace Masks
         [SerializeField] private float spinSpeed = 720f; // Gradi al secondo
         [SerializeField] private float cooldown = 0.3f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip swordSwingSound;
+
         private GameObject swordInstance;
+        private AudioSource audioSource;
         private Sword swordScript;
         private Quaternion swordOriginalRotation;
         private bool isSpinning = false;
@@ -25,6 +29,14 @@ namespace Masks
         private void Awake()
         {
             maskType = MaskType.Capitano;
+
+            // Setup AudioSource
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+            }
         }
 
         protected override void OnActivate()
@@ -105,7 +117,18 @@ namespace Masks
                 return;
             }
 
+            // Suono spada
+            PlaySound(swordSwingSound);
+
             StartCoroutine(SpinAttack());
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            if (clip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
 
         private IEnumerator SpinAttack()

@@ -9615,7 +9615,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5135825273733458246, guid: 6a085e03681a9474c9d933c13d62be44, type: 3}
       propertyPath: 'dialogueLines.Array.data[0]'
-      value: "Andiamo non c'\xE8 pi\xF9 tempo da perdere!"
+      value: "Andiamo non c'\xE8 pi\xF9 tempo da perdere! Jamm Ja"
       objectReference: {fileID: 0}
     - target: {fileID: 6274904904055243840, guid: 6a085e03681a9474c9d933c13d62be44, type: 3}
       propertyPath: m_Name

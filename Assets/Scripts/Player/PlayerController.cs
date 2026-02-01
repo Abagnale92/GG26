@@ -23,7 +23,16 @@ namespace Player
         [Header("Animation")]
         [SerializeField] private Animator animator;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip walkSound;
+        [SerializeField] private AudioClip jumpSound;
+        [SerializeField] private AudioClip landSound;
+        [SerializeField] private float walkSoundInterval = 0.4f; // Intervallo tra i suoni dei passi
+
         private CharacterController controller;
+        private AudioSource audioSource;
+        private float walkSoundTimer = 0f;
+        private bool wasGrounded = true;
         private MaskManager maskManager;
         private Vector3 velocity;
         private bool isGrounded;
@@ -55,6 +64,14 @@ namespace Player
             {
                 animator = GetComponentInChildren<Animator>();
             }
+
+            // Setup AudioSource
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+            }
         }
 
         private void Update()
@@ -80,11 +97,19 @@ namespace Player
             {
                 jumpCount = 0; // Reset quando tocca terra
 
+                // Suono atterraggio (se era in aria e ora è a terra)
+                if (!wasGrounded)
+                {
+                    PlaySound(landSound);
+                }
+
                 if (velocity.y < 0)
                 {
                     velocity.y = -2f;
                 }
             }
+
+            wasGrounded = isGrounded;
         }
 
         private void HandleMovement()
@@ -118,10 +143,22 @@ namespace Player
 
                 // Aggiorna la velocità per l'animazione
                 currentSpeed = inputDirection.magnitude * moveSpeed;
+
+                // Suono passi (solo se a terra)
+                if (isGrounded)
+                {
+                    walkSoundTimer -= Time.deltaTime;
+                    if (walkSoundTimer <= 0f)
+                    {
+                        PlaySound(walkSound);
+                        walkSoundTimer = walkSoundInterval;
+                    }
+                }
             }
             else
             {
                 currentSpeed = 0f;
+                walkSoundTimer = 0f; // Reset timer quando fermo
             }
         }
 
@@ -135,6 +172,9 @@ namespace Player
                 {
                     velocity.y = jumpForce;
                     jumpCount++;
+
+                    // Suono salto
+                    PlaySound(jumpSound);
 
                     // Trigger animazione salto
                     if (animator != null)
@@ -205,6 +245,14 @@ namespace Player
 
             // Aggiorna stato a terra
             animator.SetBool(IsGroundedHash, isGrounded);
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            if (clip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
 
         private void OnDrawGizmosSelected()

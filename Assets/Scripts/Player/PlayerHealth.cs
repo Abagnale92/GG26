@@ -21,7 +21,12 @@ namespace Player
         [Header("Respawn Settings")]
         [SerializeField] private float respawnDelay = 1.5f; // Tempo prima del respawn (dopo la morte)
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip deathSound;
+        [SerializeField] private AudioClip hurtSound;
+
         private int currentHealth;
+        private AudioSource audioSource;
         private bool isInvincible = false;
         private Renderer playerRenderer;
         private Color originalColor;
@@ -62,6 +67,14 @@ namespace Player
 
             // Trova l'Animator
             animator = GetComponentInChildren<Animator>();
+
+            // Setup AudioSource
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+            }
         }
 
         private void Start()
@@ -96,6 +109,9 @@ namespace Player
             // Invincibilità temporanea
             StartCoroutine(InvincibilityFrames());
 
+            // Suono danno
+            PlaySound(hurtSound);
+
             // Controlla morte
             if (currentHealth <= 0)
             {
@@ -119,6 +135,9 @@ namespace Player
         {
             Debug.Log("Player morto!");
             OnPlayerDeath?.Invoke();
+
+            // Suono morte
+            PlaySound(deathSound);
 
             // Avvia animazione di morte
             if (animator != null)
@@ -247,6 +266,14 @@ namespace Player
             currentHealth += amount;
             currentHealth = Mathf.Min(currentHealth, maxHealth);
             OnHealthChanged?.Invoke(currentHealth);
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            if (clip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
     }
 }
