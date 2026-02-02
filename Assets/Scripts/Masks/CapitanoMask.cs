@@ -136,6 +136,14 @@ namespace Masks
             isSpinning = true;
             canAttack = false;
 
+            // Controlla che la spada esista
+            if (swordInstance == null)
+            {
+                isSpinning = false;
+                canAttack = true;
+                yield break;
+            }
+
             // Resetta la lista dei nemici colpiti per questo attacco
             if (swordScript != null)
             {
@@ -154,7 +162,7 @@ namespace Masks
             float totalRotation = 0f;
             float targetRotation = 360f; // Una rotazione completa
 
-            while (totalRotation < targetRotation)
+            while (totalRotation < targetRotation && swordInstance != null)
             {
                 float rotationThisFrame = spinSpeed * Time.deltaTime;
                 currentAngle += rotationThisFrame * direction;

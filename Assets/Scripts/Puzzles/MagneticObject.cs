@@ -5,9 +5,18 @@ namespace Puzzles
     /// <summary>
     /// Oggetto magnetico che può essere attratto dalla maschera di Colombina.
     /// Se viene lanciato troppo lontano dalla posizione iniziale, viene respawnato.
+    /// Supporta identificazione univoca per i MagneticReceiver.
     /// </summary>
     public class MagneticObject : MonoBehaviour
     {
+        [Header("Identification")]
+        [Tooltip("ID univoco dell'oggetto (es. 'chiave_rossa', 'gemma_blu', 'cubo_1')")]
+        [SerializeField] private string objectID = "default";
+        [Tooltip("Nome visualizzato per l'oggetto (opzionale, per UI)")]
+        [SerializeField] private string displayName = "";
+        [Tooltip("Icona dell'oggetto (opzionale, per UI)")]
+        [SerializeField] private Sprite icon;
+
         [Header("Respawn Settings")]
         [Tooltip("Distanza massima dalla posizione iniziale prima del respawn")]
         [SerializeField] private float maxDistanceFromStart = 20f;
@@ -23,6 +32,44 @@ namespace Puzzles
         private AudioSource audioSource;
         private float outOfRangeTimer = 0f;
         private bool isOutOfRange = false;
+
+        // Stati dell'oggetto
+        private bool isBeingAttracted = false; // È attratto dal player (Colombina)
+        private bool isOnReceiver = false; // È posizionato su un receiver
+        private bool wasThrown = false; // È stato lanciato
+
+        /// <summary>
+        /// ID univoco dell'oggetto usato per l'identificazione nei MagneticReceiver
+        /// </summary>
+        public string ObjectID => objectID;
+
+        /// <summary>
+        /// Nome visualizzato dell'oggetto
+        /// </summary>
+        public string DisplayName => string.IsNullOrEmpty(displayName) ? objectID : displayName;
+
+        /// <summary>
+        /// Icona dell'oggetto
+        /// </summary>
+        public Sprite Icon => icon;
+
+        /// <summary>
+        /// Imposta l'ID dell'oggetto via codice
+        /// </summary>
+        public void SetObjectID(string newID)
+        {
+            objectID = newID;
+        }
+
+        /// <summary>
+        /// Indica se l'oggetto è attualmente attratto dal player
+        /// </summary>
+        public bool IsBeingAttracted => isBeingAttracted;
+
+        /// <summary>
+        /// Indica se l'oggetto è posizionato su un receiver
+        /// </summary>
+        public bool IsOnReceiver => isOnReceiver;
 
         private void Start()
         {
@@ -44,6 +91,18 @@ namespace Puzzles
 
         private void Update()
         {
+            // Non fare respawn se:
+            // - È attratto dal player (Colombina attiva)
+            // - È posizionato su un receiver
+            // - Non è stato ancora lanciato
+            if (isBeingAttracted || isOnReceiver || !wasThrown)
+            {
+                // Resetta il timer se non siamo in condizioni di respawn
+                isOutOfRange = false;
+                outOfRangeTimer = 0f;
+                return;
+            }
+
             // Controlla la distanza dalla posizione iniziale
             float distance = Vector3.Distance(transform.position, initialPosition);
 
@@ -116,6 +175,43 @@ namespace Puzzles
             initialRotation = newRotation;
         }
 
+        /// <summary>
+        /// Chiamato quando l'oggetto viene attratto dal player (Colombina)
+        /// </summary>
+        public void SetBeingAttracted(bool attracted)
+        {
+            isBeingAttracted = attracted;
+
+            // Se viene attratto, non è più "lanciato"
+            if (attracted)
+            {
+                wasThrown = false;
+            }
+        }
+
+        /// <summary>
+        /// Chiamato quando l'oggetto viene lanciato
+        /// </summary>
+        public void SetThrown()
+        {
+            wasThrown = true;
+            isBeingAttracted = false;
+        }
+
+        /// <summary>
+        /// Chiamato quando l'oggetto viene posizionato su un receiver
+        /// </summary>
+        public void SetOnReceiver(bool onReceiver)
+        {
+            isOnReceiver = onReceiver;
+
+            // Se è su un receiver, non è più "lanciato"
+            if (onReceiver)
+            {
+                wasThrown = false;
+            }
+        }
+
         private void OnDrawGizmosSelected()
         {
             // Mostra il range massimo
@@ -127,6 +223,11 @@ namespace Puzzles
             // Posizione iniziale
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(center, 0.3f);
+
+            // Mostra l'ID sopra l'oggetto nell'editor
+#if UNITY_EDITOR
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 1.5f, $"ID: {objectID}");
+#endif
         }
     }
 }

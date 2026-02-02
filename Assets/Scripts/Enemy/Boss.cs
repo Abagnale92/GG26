@@ -55,6 +55,11 @@ namespace Enemies
         [SerializeField] private float hitFlashDuration = 0.1f;
         [SerializeField] private Color hitColor = Color.red;
 
+        [Header("Jump Attack Indicator")]
+        [SerializeField] private GameObject aoeIndicatorPrefab; // Prefab opzionale (es. un cilindro rosso)
+        [SerializeField] private float indicatorDuration = 0.8f; // Tempo che l'indicatore rimane visibile prima del salto
+        [SerializeField] private Color indicatorColor = new Color(1f, 0f, 0f, 0.5f); // Rosso semi-trasparente
+
         [Header("Animation")]
         [SerializeField] private Animator animator;
 
@@ -91,6 +96,7 @@ namespace Enemies
         private Vector3 jumpStartPos;
         private Vector3 jumpTargetPos;
         private float initialGroundY; // Altezza Y iniziale del boss (terreno)
+        private GameObject currentIndicator; // Indicatore AOE attivo
 
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
@@ -305,15 +311,21 @@ namespace Enemies
             SetState(BossState.JumpAttacking);
             lastJumpAttackTime = Time.time;
 
-            // Animazione e suono salto
-            if (animator != null)
-                animator.SetTrigger(JumpAttackHash);
-            PlaySound(jumpAttackSound);
-
             jumpStartPos = transform.position;
 
             // Posizione target: X e Z del player, Y uguale all'altezza iniziale del boss
             jumpTargetPos = new Vector3(player.position.x, initialGroundY, player.position.z);
+
+            // Mostra l'indicatore a terra PRIMA del salto
+            ShowAOEIndicator(jumpTargetPos);
+
+            // Aspetta che il player veda l'indicatore
+            yield return new WaitForSeconds(indicatorDuration);
+
+            // Animazione e suono salto
+            if (animator != null)
+                animator.SetTrigger(JumpAttackHash);
+            PlaySound(jumpAttackSound);
 
             // Fase di salto - un unico arco parabolico
             float elapsed = 0f;
@@ -338,6 +350,9 @@ namespace Enemies
             // Atterraggio - posizione finale esatta (sempre all'altezza iniziale)
             transform.position = new Vector3(jumpTargetPos.x, initialGroundY, jumpTargetPos.z);
             PlaySound(landSound);
+
+            // Rimuovi l'indicatore
+            HideAOEIndicator();
 
             // Danno AOE
             DealAOEDamage();
@@ -364,6 +379,66 @@ namespace Enemies
                         Debug.Log("Boss Jump Attack ha colpito il player!");
                     }
                 }
+            }
+        }
+
+        private void ShowAOEIndicator(Vector3 position)
+        {
+            // Se c'è già un indicatore, rimuovilo
+            HideAOEIndicator();
+
+            if (aoeIndicatorPrefab != null)
+            {
+                // Usa il prefab personalizzato
+                currentIndicator = Instantiate(aoeIndicatorPrefab, position, Quaternion.identity);
+                // Scala in base al raggio AOE
+                currentIndicator.transform.localScale = new Vector3(jumpAttackRadius * 2f, 0.1f, jumpAttackRadius * 2f);
+            }
+            else
+            {
+                // Crea un indicatore di default (cilindro appiattito)
+                currentIndicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                currentIndicator.name = "AOE_Indicator";
+
+                // Posiziona leggermente sopra il terreno per evitare z-fighting
+                currentIndicator.transform.position = new Vector3(position.x, position.y + 0.05f, position.z);
+
+                // Scala: diametro = raggio * 2, altezza molto bassa
+                currentIndicator.transform.localScale = new Vector3(jumpAttackRadius * 2f, 0.02f, jumpAttackRadius * 2f);
+
+                // Rimuovi il collider (non deve bloccare nulla)
+                Collider col = currentIndicator.GetComponent<Collider>();
+                if (col != null) Destroy(col);
+
+                // Applica materiale rosso semi-trasparente
+                Renderer rend = currentIndicator.GetComponent<Renderer>();
+                if (rend != null)
+                {
+                    // Crea un nuovo materiale trasparente
+                    Material mat = new Material(Shader.Find("Standard"));
+                    mat.color = indicatorColor;
+
+                    // Abilita trasparenza
+                    mat.SetFloat("_Mode", 3); // Transparent mode
+                    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mat.SetInt("_ZWrite", 0);
+                    mat.DisableKeyword("_ALPHATEST_ON");
+                    mat.EnableKeyword("_ALPHABLEND_ON");
+                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    mat.renderQueue = 3000;
+
+                    rend.material = mat;
+                }
+            }
+        }
+
+        private void HideAOEIndicator()
+        {
+            if (currentIndicator != null)
+            {
+                Destroy(currentIndicator);
+                currentIndicator = null;
             }
         }
 
