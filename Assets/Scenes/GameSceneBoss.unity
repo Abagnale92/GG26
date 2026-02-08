@@ -5429,18 +5429,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1150993618}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onConditionMet:
     m_PersistentCalls:
       m_Calls: []
@@ -7469,6 +7457,8 @@ MonoBehaviour:
   videoDisplay: {fileID: 2138703129}
   skipHintText: {fileID: 0}
   muteGameAudio: 1
+  stopGameMusic: 1
+  musicFadeOutDuration: 0
   cutsceneMusic: {fileID: 0}
   useFadeIn: 1
   useFadeOut: 1
@@ -11566,6 +11556,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7334793852476596178, guid: e81d070a72ea88547b25ea0305f77a5d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7483667155835926669, guid: e81d070a72ea88547b25ea0305f77a5d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.89
@@ -11739,8 +11733,8 @@ MonoBehaviour:
   dialogueLines:
   - "Terenzio, ormai per te \xE8 tardi! Beatrice sar\xE0 la mia sposa, e tu non potrai
     fermarmi! "
-  - "Terenzio, ormai per te \xE8 tardi! Beatrice sar\xE0 la mia sposa, e tu non potrai
-    fermarmi! "
+  - "Oggi in sta chiesa si far\xE0 un matrimonio e anche un funerale! AH AH AH AH
+    AH"
   dialogueLineDelay: 4
   voiceSound: {fileID: 8300000, guid: 8a4358093238f474ebc08438dd384cf9, type: 3}
   dialogueUI: {fileID: 1869218523}

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 namespace UI
@@ -15,11 +16,26 @@ namespace UI
         [SerializeField] private GameObject mainMenuPanel;
         [SerializeField] private GameObject creditsPanel;
         [SerializeField] private GameObject videoPanel;
+        [SerializeField] private GameObject levelSelectPanel;
 
         [Header("Buttons")]
         [SerializeField] private Button playButton;
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button backButton; // Nel pannello crediti
+        [SerializeField] private Button levelSelectButton; // Bottone per aprire selezione livelli
+        [SerializeField] private Button backFromLevelSelectButton; // Bottone indietro dalla selezione livelli
+
+        [Header("Level Select Buttons")]
+        [SerializeField] private Button level1Button;
+        [SerializeField] private Button level2Button;
+        [SerializeField] private Button level3Button;
+        [SerializeField] private Button level4Button;
+
+        [Header("Level Scene Names")]
+        [SerializeField] private string level1SceneName = "GameScene1";
+        [SerializeField] private string level2SceneName = "GameScene2";
+        [SerializeField] private string level3SceneName = "GameScene3";
+        [SerializeField] private string level4SceneName = "GameScene4";
 
         [Header("Video Settings")]
         [Tooltip("Nome del file video in StreamingAssets (es: Introduzione.mp4)")]
@@ -36,8 +52,17 @@ namespace UI
 
         private void Start()
         {
+            // IMPORTANTE: Assicurati che Time.timeScale sia 1 (potrebbe essere 0 se arrivi da pausa)
+            Time.timeScale = 1f;
+
+            // Resetta flag transizione
+            isTransitioning = false;
+
             // Assicurati che SceneTransition esista
             EnsureSceneTransition();
+
+            // Assicurati che ci sia un EventSystem nella scena
+            EnsureEventSystem();
 
             // Setup iniziale pannelli
             ShowMainMenu();
@@ -50,6 +75,25 @@ namespace UI
             {
                 SceneTransition.Instance.SetBlack();
                 SceneTransition.Instance.FadeIn();
+            }
+
+            Debug.Log("MainMenuController: Inizializzazione completata");
+        }
+
+        private void EnsureEventSystem()
+        {
+            // Controlla se esiste un EventSystem
+            if (EventSystem.current == null)
+            {
+                // Cerca nella scena
+                var existingES = FindFirstObjectByType<EventSystem>();
+                if (existingES == null)
+                {
+                    Debug.LogWarning("MainMenuController: EventSystem mancante! Creazione automatica...");
+                    GameObject eventSystemObj = new GameObject("EventSystem");
+                    eventSystemObj.AddComponent<EventSystem>();
+                    eventSystemObj.AddComponent<StandaloneInputModule>();
+                }
             }
         }
 
@@ -77,6 +121,37 @@ namespace UI
             if (backButton != null)
             {
                 backButton.onClick.AddListener(OnBackClicked);
+            }
+
+            if (levelSelectButton != null)
+            {
+                levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
+            }
+
+            if (backFromLevelSelectButton != null)
+            {
+                backFromLevelSelectButton.onClick.AddListener(OnBackFromLevelSelectClicked);
+            }
+
+            // Setup bottoni livelli
+            if (level1Button != null)
+            {
+                level1Button.onClick.AddListener(() => LoadLevel(level1SceneName));
+            }
+
+            if (level2Button != null)
+            {
+                level2Button.onClick.AddListener(() => LoadLevel(level2SceneName));
+            }
+
+            if (level3Button != null)
+            {
+                level3Button.onClick.AddListener(() => LoadLevel(level3SceneName));
+            }
+
+            if (level4Button != null)
+            {
+                level4Button.onClick.AddListener(() => LoadLevel(level4SceneName));
             }
         }
 
@@ -127,6 +202,7 @@ namespace UI
             if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
             if (creditsPanel != null) creditsPanel.SetActive(false);
             if (videoPanel != null) videoPanel.SetActive(false);
+            if (levelSelectPanel != null) levelSelectPanel.SetActive(false);
         }
 
         private void ShowCreditsPanel()
@@ -134,6 +210,7 @@ namespace UI
             if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
             if (creditsPanel != null) creditsPanel.SetActive(true);
             if (videoPanel != null) videoPanel.SetActive(false);
+            if (levelSelectPanel != null) levelSelectPanel.SetActive(false);
         }
 
         private void ShowVideoPanel()
@@ -141,7 +218,74 @@ namespace UI
             if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
             if (creditsPanel != null) creditsPanel.SetActive(false);
             if (videoPanel != null) videoPanel.SetActive(true);
+            if (levelSelectPanel != null) levelSelectPanel.SetActive(false);
         }
+
+        private void ShowLevelSelectPanel()
+        {
+            if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+            if (creditsPanel != null) creditsPanel.SetActive(false);
+            if (videoPanel != null) videoPanel.SetActive(false);
+            if (levelSelectPanel != null) levelSelectPanel.SetActive(true);
+        }
+
+        /// <summary>
+        /// Chiamato quando si preme il bottone Selezione Livelli
+        /// </summary>
+        public void OnLevelSelectClicked()
+        {
+            if (isTransitioning) return;
+            ShowLevelSelectPanel();
+        }
+
+        /// <summary>
+        /// Chiamato quando si preme il bottone Indietro dalla selezione livelli
+        /// </summary>
+        public void OnBackFromLevelSelectClicked()
+        {
+            if (isTransitioning) return;
+            ShowMainMenu();
+        }
+
+        /// <summary>
+        /// Carica direttamente un livello senza video introduttivo
+        /// </summary>
+        public void LoadLevel(string sceneName)
+        {
+            if (isTransitioning) return;
+            if (string.IsNullOrEmpty(sceneName)) return;
+
+            isTransitioning = true;
+
+            if (SceneTransition.Instance != null)
+            {
+                SceneTransition.Instance.LoadSceneWithFade(sceneName);
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+            }
+        }
+
+        /// <summary>
+        /// Carica il livello 1
+        /// </summary>
+        public void LoadLevel1() => LoadLevel(level1SceneName);
+
+        /// <summary>
+        /// Carica il livello 2
+        /// </summary>
+        public void LoadLevel2() => LoadLevel(level2SceneName);
+
+        /// <summary>
+        /// Carica il livello 3
+        /// </summary>
+        public void LoadLevel3() => LoadLevel(level3SceneName);
+
+        /// <summary>
+        /// Carica il livello 4
+        /// </summary>
+        public void LoadLevel4() => LoadLevel(level4SceneName);
 
         private void StartVideo()
         {
@@ -189,6 +333,12 @@ namespace UI
             if (playButton != null) playButton.onClick.RemoveListener(OnPlayClicked);
             if (creditsButton != null) creditsButton.onClick.RemoveListener(OnCreditsClicked);
             if (backButton != null) backButton.onClick.RemoveListener(OnBackClicked);
+            if (levelSelectButton != null) levelSelectButton.onClick.RemoveListener(OnLevelSelectClicked);
+            if (backFromLevelSelectButton != null) backFromLevelSelectButton.onClick.RemoveListener(OnBackFromLevelSelectClicked);
+            if (level1Button != null) level1Button.onClick.RemoveAllListeners();
+            if (level2Button != null) level2Button.onClick.RemoveAllListeners();
+            if (level3Button != null) level3Button.onClick.RemoveAllListeners();
+            if (level4Button != null) level4Button.onClick.RemoveAllListeners();
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
+using Audio;
 
 namespace UI
 {
@@ -43,6 +44,8 @@ namespace UI
 
         [Header("Audio")]
         [SerializeField] private bool muteGameAudio = true;
+        [SerializeField] private bool stopGameMusic = true; // Ferma la musica dell'AudioManager
+        [SerializeField] private float musicFadeOutDuration = 0.5f; // Durata fade out musica
         [SerializeField] private AudioClip cutsceneMusic; // Musica opzionale durante il video
 
         [Header("Fade")]
@@ -118,6 +121,12 @@ namespace UI
             originalTimeScale = Time.timeScale;
 
             OnCutsceneStarted?.Invoke();
+
+            // Ferma la musica di gioco dell'AudioManager
+            if (stopGameMusic && AudioManager.Instance != null)
+            {
+                AudioManager.Instance.StopMusicWithFadeOut(musicFadeOutDuration);
+            }
 
             // Pausa il gioco
             Time.timeScale = 0f;
