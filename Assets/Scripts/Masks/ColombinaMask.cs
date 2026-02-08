@@ -30,6 +30,7 @@ namespace Masks
         private List<Rigidbody> attractedObjects = new List<Rigidbody>();
         private Collider[] overlapResults = new Collider[20];
         private Dictionary<Rigidbody, float> thrownObjectsImmunity = new Dictionary<Rigidbody, float>(); // Oggetti lanciati con tempo di immunità
+        private Dictionary<Rigidbody, bool> originalGravityState = new Dictionary<Rigidbody, bool>(); // Stato originale della gravità
 
         private void Awake()
         {
@@ -91,11 +92,18 @@ namespace Masks
 
         private void FindMagneticObjects()
         {
-            // Prima notifica gli oggetti che non sono più attratti
+            // Prima ripristina la gravità e notifica gli oggetti che non sono più attratti
             foreach (var rb in attractedObjects)
             {
                 if (rb != null)
                 {
+                    // Ripristina la gravità originale
+                    if (originalGravityState.ContainsKey(rb))
+                    {
+                        rb.useGravity = originalGravityState[rb];
+                        originalGravityState.Remove(rb);
+                    }
+
                     MagneticObject magObj = rb.GetComponent<MagneticObject>();
                     if (magObj != null)
                     {
@@ -132,6 +140,13 @@ namespace Masks
 
                         attractedObjects.Add(rb);
 
+                        // Salva lo stato originale della gravità e disabilitala
+                        if (!originalGravityState.ContainsKey(rb))
+                        {
+                            originalGravityState[rb] = rb.useGravity;
+                        }
+                        rb.useGravity = false;
+
                         // Notifica l'oggetto che viene attratto
                         MagneticObject magObj = rb.GetComponent<MagneticObject>();
                         if (magObj != null)
@@ -157,11 +172,8 @@ namespace Masks
 
                 if (distance > arrivalThreshold)
                 {
-                    // Movimento fluido verso il target usando interpolazione
-                    // Velocità maggiore quando lontano, rallenta avvicinandosi
+                    // Movimento fluido verso il target
                     float speed = attractSpeed * Mathf.Clamp01(distance / attractRadius);
-
-                    // Calcola la velocità desiderata
                     Vector3 desiredVelocity = direction.normalized * speed;
 
                     // Interpola verso la velocità desiderata per un movimento fluido
@@ -170,14 +182,14 @@ namespace Masks
                 else
                 {
                     // Oggetto arrivato: mantienilo fermo nella posizione di hold
-                    rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, smoothing * 2f * Time.deltaTime);
+                    rb.linearVelocity = Vector3.zero;
 
-                    // Posizione più precisa quando è vicino
-                    rb.position = Vector3.Lerp(rb.position, targetPosition, smoothing * Time.deltaTime);
+                    // Posizione precisa usando MovePosition per evitare jitter
+                    rb.MovePosition(Vector3.Lerp(rb.position, targetPosition, smoothing * Time.deltaTime));
                 }
 
-                // Riduci la rotazione per un effetto più stabile
-                rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, smoothing * Time.deltaTime);
+                // Ferma completamente la rotazione per un effetto stabile
+                rb.angularVelocity = Vector3.zero;
             }
         }
 
@@ -189,6 +201,12 @@ namespace Masks
             {
                 if (rb != null)
                 {
+                    // Ripristina la gravità originale
+                    if (originalGravityState.ContainsKey(rb))
+                    {
+                        rb.useGravity = originalGravityState[rb];
+                    }
+
                     MagneticObject magObj = rb.GetComponent<MagneticObject>();
                     if (magObj != null)
                     {
@@ -199,6 +217,7 @@ namespace Masks
 
             // Gli oggetti cadranno naturalmente grazie alla gravità
             attractedObjects.Clear();
+            originalGravityState.Clear();
         }
 
         /// <summary>
@@ -230,6 +249,13 @@ namespace Masks
 
             if (closest != null)
             {
+                // Ripristina la gravità
+                if (originalGravityState.ContainsKey(closest))
+                {
+                    closest.useGravity = originalGravityState[closest];
+                    originalGravityState.Remove(closest);
+                }
+
                 // Notifica l'oggetto che è stato lanciato
                 MagneticObject magObj = closest.GetComponent<MagneticObject>();
                 if (magObj != null)

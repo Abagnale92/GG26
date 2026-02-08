@@ -13,6 +13,7 @@ TagManager:
   - InvisibleEnemy
   - SpawnPoint
   - Boss
+  - GenericBoss
   layers:
   - Default
   - TransparentFX

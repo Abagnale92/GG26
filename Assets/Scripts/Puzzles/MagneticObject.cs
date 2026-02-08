@@ -1,4 +1,5 @@
 using UnityEngine;
+using Player;
 
 namespace Puzzles
 {
@@ -22,6 +23,8 @@ namespace Puzzles
         [SerializeField] private float maxDistanceFromStart = 20f;
         [Tooltip("Tempo di attesa prima del respawn (per evitare respawn durante il lancio)")]
         [SerializeField] private float respawnDelay = 1f;
+        [Tooltip("Altezza minima sotto la quale l'oggetto viene respawnato automaticamente (fallback per zone letali)")]
+        [SerializeField] private float minYPosition = -50f;
 
         [Header("Audio")]
         [SerializeField] private AudioClip respawnSound;
@@ -37,6 +40,9 @@ namespace Puzzles
         private bool isBeingAttracted = false; // È attratto dal player (Colombina)
         private bool isOnReceiver = false; // È posizionato su un receiver
         private bool wasThrown = false; // È stato lanciato
+
+        // Riferimento al PlayerHealth per ascoltare la morte
+        private PlayerHealth playerHealth;
 
         /// <summary>
         /// ID univoco dell'oggetto usato per l'identificazione nei MagneticReceiver
@@ -87,10 +93,64 @@ namespace Puzzles
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.playOnAwake = false;
             }
+
+            // Trova PlayerHealth e iscriviti all'evento di morte
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerHealth = playerObj.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.OnPlayerDeath += OnPlayerDied;
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // Rimuovi la sottoscrizione all'evento
+            if (playerHealth != null)
+            {
+                playerHealth.OnPlayerDeath -= OnPlayerDied;
+            }
+        }
+
+        /// <summary>
+        /// Chiamato quando il player muore
+        /// </summary>
+        private void OnPlayerDied()
+        {
+            // Se l'oggetto era attratto dal player quando è morto, fai il respawn
+            if (isBeingAttracted && !isOnReceiver)
+            {
+                Debug.Log($"{gameObject.name}: Player morto mentre l'oggetto era attratto, respawn!");
+
+                // Resetta gli stati
+                isBeingAttracted = false;
+                wasThrown = false;
+
+                // Ripristina la gravità se era disabilitata
+                if (rb != null)
+                {
+                    rb.useGravity = true;
+                }
+
+                // Respawna alla posizione iniziale
+                Respawn();
+            }
         }
 
         private void Update()
         {
+            // Controllo di sicurezza: se l'oggetto è caduto troppo in basso, respawna sempre
+            // (anche se è attratto o su un receiver - questo è un fallback per zone letali)
+            if (transform.position.y < minYPosition)
+            {
+                Debug.Log($"{gameObject.name}: Caduto sotto il limite Y ({minYPosition}), respawn forzato!");
+                ForceRespawn();
+                return;
+            }
+
             // Non fare respawn se:
             // - È attratto dal player (Colombina attiva)
             // - È posizionato su un receiver
@@ -128,6 +188,26 @@ namespace Puzzles
                 isOutOfRange = false;
                 outOfRangeTimer = 0f;
             }
+        }
+
+        /// <summary>
+        /// Forza il respawn dell'oggetto, resettando tutti gli stati
+        /// Usato quando l'oggetto cade fuori mappa o in zone letali
+        /// </summary>
+        public void ForceRespawn()
+        {
+            // Resetta tutti gli stati
+            isBeingAttracted = false;
+            wasThrown = false;
+            isOnReceiver = false;
+
+            // Ripristina la gravità
+            if (rb != null)
+            {
+                rb.useGravity = true;
+            }
+
+            Respawn();
         }
 
         /// <summary>

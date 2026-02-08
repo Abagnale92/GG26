@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8824418652799044186
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -21.83
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.2999997
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.04
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.49999994
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.86602545
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_Name
+      value: CapitanoIdle2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 8120051100cb42042a80949e447bda05, type: 3}
+    - target: {fileID: 5866666021909216657, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: b3e57546caf820f46aadbe1e726169f2, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2110581604691834978}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8120051100cb42042a80949e447bda05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5777999588162007383}
+  m_SourcePrefab: {fileID: 100100000, guid: 8120051100cb42042a80949e447bda05, type: 3}
+--- !u!1 &8554530125006649099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8120051100cb42042a80949e447bda05, type: 3}
+  m_PrefabInstance: {fileID: 8824418652799044186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2110581604691834978
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554530125006649099}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 3, z: 1}
+  m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!114 &5777999588162007383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554530125006649099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f225d878086ceeb4894e9f073fe064e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 3
+  interactKey: 102
+  dialogueLines:
+  - "Caro Ragazzo, la chiesa \xE8 per di l\xE0, ma \xE8 circondata!"
+  - "Ho sconfitto mille uomini\u2026 tutti insieme\u2026 da solo!"
+  - C'ho i pugni nelle mani!
+  - Prendi la mia maschera, farai tremare la paura stessa!
+  - Devi sconfiggerli tutti per andare avanti!
+  textDisplayTime: 3
+  givesItem: 1
+  itemToGive: {fileID: 1272796824553782109, guid: abba4384d30833c418c819aa7861770d, type: 3}
+  itemSpawnOffset: {x: -2, y: 2, z: 1}
+  npcName: Capitano
+  voiceSound: {fileID: 8300000, guid: 77b59e7c4eb630540b0f953a3562eefb, type: 3}
+  interactionPrompt: {fileID: 0}
+  dialogueUI: {fileID: 0}
+  dialogueText: {fileID: 0}
+  npcNameText: {fileID: 0}

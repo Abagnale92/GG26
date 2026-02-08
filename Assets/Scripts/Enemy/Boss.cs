@@ -14,6 +14,7 @@ namespace Enemies
         public enum BossState
         {
             Idle,
+            Dialogue,
             Walking,
             Attacking,
             JumpAttacking,
@@ -73,6 +74,18 @@ namespace Enemies
         [SerializeField] private AudioClip hurtSound;
         [SerializeField] private AudioClip deathSound;
 
+        [Header("Intro Dialogue (Opzionale)")]
+        [SerializeField] private bool hasIntroDialogue = false;
+        [SerializeField] private string bossName = "Boss";
+        [SerializeField][TextArea(2, 5)] private string[] dialogueLines;
+        [SerializeField] private float dialogueLineDelay = 2f;
+        [SerializeField] private AudioClip voiceSound;
+
+        [Header("Dialogue UI")]
+        [SerializeField] private GameObject dialogueUI;
+        [SerializeField] private TMPro.TextMeshProUGUI dialogueText;
+        [SerializeField] private TMPro.TextMeshProUGUI bossNameText;
+
         // Animator hashes
         private static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
@@ -98,12 +111,19 @@ namespace Enemies
         private float initialGroundY; // Altezza Y iniziale del boss (terreno)
         private GameObject currentIndicator; // Indicatore AOE attivo
 
+        // Dialogue
+        private bool dialogueCompleted = false;
+        private bool combatStarted = false;
+
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
         public bool IsDead => currentState == BossState.Dead;
 
         public event System.Action<int> OnHealthChanged;
         public event System.Action OnBossDeath;
+        public event System.Action OnDialogueStarted;
+        public event System.Action OnDialogueEnded;
+        public event System.Action OnCombatStarted;
 
         private void Start()
         {
@@ -144,6 +164,18 @@ namespace Enemies
             lastNormalAttackTime = -normalAttackCooldown;
             lastJumpAttackTime = -jumpAttackCooldown;
             lastSpreadAttackTime = -spreadAttackCooldown;
+
+            // Nascondi UI dialogo all'inizio
+            if (dialogueUI != null)
+            {
+                dialogueUI.SetActive(false);
+            }
+
+            // Se non c'è dialogo, il combattimento può iniziare subito
+            if (!hasIntroDialogue)
+            {
+                dialogueCompleted = true;
+            }
         }
 
         private void Update()
@@ -151,6 +183,19 @@ namespace Enemies
             if (currentState == BossState.Dead || player == null) return;
 
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // Controlla se iniziare l'incontro con il dialogo
+            if (!combatStarted && distanceToPlayer <= detectionRange)
+            {
+                StartEncounter();
+                return;
+            }
+
+            // Se sta parlando, non fare nulla
+            if (currentState == BossState.Dialogue) return;
+
+            // Se il combattimento non è ancora iniziato, aspetta
+            if (!combatStarted) return;
 
             // Fuori dal range di detection
             if (distanceToPlayer > detectionRange)
@@ -219,6 +264,74 @@ namespace Enemies
                 }
             }
         }
+
+        #region Dialogue
+
+        private void StartEncounter()
+        {
+            combatStarted = true;
+
+            if (hasIntroDialogue && dialogueLines != null && dialogueLines.Length > 0)
+            {
+                StartCoroutine(PlayDialogue());
+            }
+            else
+            {
+                dialogueCompleted = true;
+                OnCombatStarted?.Invoke();
+            }
+        }
+
+        private IEnumerator PlayDialogue()
+        {
+            currentState = BossState.Dialogue;
+            OnDialogueStarted?.Invoke();
+
+            // Mostra UI dialogo
+            if (dialogueUI != null)
+            {
+                dialogueUI.SetActive(true);
+            }
+
+            // Mostra nome boss
+            if (bossNameText != null)
+            {
+                bossNameText.text = bossName;
+            }
+
+            // Riproduci suono voce
+            PlaySound(voiceSound);
+
+            // Mostra ogni linea di dialogo
+            foreach (string line in dialogueLines)
+            {
+                if (dialogueText != null)
+                {
+                    dialogueText.text = line;
+                }
+                else
+                {
+                    Debug.Log($"[{bossName}]: {line}");
+                }
+
+                yield return new WaitForSeconds(dialogueLineDelay);
+            }
+
+            // Nascondi UI dialogo
+            if (dialogueUI != null)
+            {
+                dialogueUI.SetActive(false);
+            }
+
+            dialogueCompleted = true;
+            currentState = BossState.Idle;
+            OnDialogueEnded?.Invoke();
+            OnCombatStarted?.Invoke();
+
+            Debug.Log($"{bossName}: Dialogo completato, inizia il combattimento!");
+        }
+
+        #endregion
 
         private void LookAtPlayer()
         {
@@ -527,6 +640,9 @@ namespace Enemies
         public void TakeHit(int damage = 1)
         {
             if (currentState == BossState.Dead) return;
+
+            // Invulnerabile durante il dialogo
+            if (currentState == BossState.Dialogue) return;
 
             currentHealth -= damage;
             currentHealth = Mathf.Max(0, currentHealth);

@@ -30,7 +30,7 @@ namespace Puzzles
         [SerializeField] private string magneticTag = "Magnetic";
         [Tooltip("Se true, l'oggetto magnetico viene bloccato sulla base")]
         [SerializeField] private bool lockObjectOnReceiver = true;
-        [Tooltip("Posizione dove l'oggetto viene bloccato (se null, usa il centro del receiver)")]
+        [Tooltip("Posizione dove l'oggetto viene bloccato (trascina qui un Transform vuoto per posizionarlo dove vuoi)")]
         [SerializeField] private Transform snapPoint;
 
         [Header("Object Identification")]

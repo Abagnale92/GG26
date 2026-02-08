@@ -12,8 +12,14 @@ namespace Checkpoints
         [SerializeField] private Color inactiveColor = Color.gray;
         [SerializeField] private Color activeColor = Color.green;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip activationSound;
+        [SerializeField][Range(0f, 1f)] private float soundVolume = 1f;
+
         private Renderer checkpointRenderer;
+        private AudioSource audioSource;
         private bool isActive = false;
+        private bool hasBeenActivated = false; // Per riprodurre il suono solo la prima volta
 
         public bool IsActive => isActive;
 
@@ -30,6 +36,15 @@ namespace Checkpoints
             if (checkpointRenderer == null)
             {
                 checkpointRenderer = GetComponentInChildren<Renderer>();
+            }
+
+            // Setup AudioSource
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1f; // 3D sound
             }
 
             // Imposta colore iniziale
@@ -58,7 +73,22 @@ namespace Checkpoints
 
             if (active)
             {
+                // Riproduci il suono solo la prima volta che viene attivato
+                if (!hasBeenActivated)
+                {
+                    hasBeenActivated = true;
+                    PlayActivationSound();
+                }
+
                 Debug.Log($"Checkpoint attivato: {gameObject.name}");
+            }
+        }
+
+        private void PlayActivationSound()
+        {
+            if (activationSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(activationSound, soundVolume);
             }
         }
 

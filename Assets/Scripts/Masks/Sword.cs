@@ -18,6 +18,7 @@ namespace Masks
         // Lista dei nemici già colpiti in questo attacco (evita colpi multipli)
         private HashSet<Enemy> hitEnemiesThisSwing = new HashSet<Enemy>();
         private HashSet<Boss> hitBossesThisSwing = new HashSet<Boss>();
+        private HashSet<GenericBoss> hitGenericBossesThisSwing = new HashSet<GenericBoss>();
 
         private void Awake()
         {
@@ -34,6 +35,7 @@ namespace Masks
             // Reset della lista quando la spada viene attivata per un nuovo attacco
             hitEnemiesThisSwing.Clear();
             hitBossesThisSwing.Clear();
+            hitGenericBossesThisSwing.Clear();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -70,6 +72,21 @@ namespace Masks
 
         private void HandleBossHit(Collider other)
         {
+            // Prova prima con GenericBoss (nuovo sistema)
+            GenericBoss genericBoss = other.GetComponent<GenericBoss>();
+            if (genericBoss == null)
+            {
+                genericBoss = other.GetComponentInParent<GenericBoss>();
+            }
+
+            if (genericBoss != null && !hitGenericBossesThisSwing.Contains(genericBoss))
+            {
+                hitGenericBossesThisSwing.Add(genericBoss);
+                genericBoss.TakeHit();
+                return;
+            }
+
+            // Fallback: prova con Boss (vecchio sistema)
             Boss boss = other.GetComponent<Boss>();
             if (boss == null)
             {
@@ -78,10 +95,7 @@ namespace Masks
 
             if (boss != null && !hitBossesThisSwing.Contains(boss))
             {
-                // Segna il boss come colpito in questo swing
                 hitBossesThisSwing.Add(boss);
-
-                // Infliggi il colpo
                 boss.TakeHit();
             }
         }
@@ -93,6 +107,7 @@ namespace Masks
         {
             hitEnemiesThisSwing.Clear();
             hitBossesThisSwing.Clear();
+            hitGenericBossesThisSwing.Clear();
         }
     }
 }
