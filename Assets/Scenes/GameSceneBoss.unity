@@ -11546,7 +11546,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2081196466865483540, guid: e81d070a72ea88547b25ea0305f77a5d, type: 3}
       propertyPath: requireKeyToReveal
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3672493183754695958, guid: e81d070a72ea88547b25ea0305f77a5d, type: 3}
       propertyPath: m_Name

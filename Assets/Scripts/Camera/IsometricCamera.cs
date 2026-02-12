@@ -28,10 +28,17 @@ namespace CameraSystem
         [SerializeField] private bool useLookAhead = true;
         [SerializeField] private float lookAheadDistance = 2f;
         [SerializeField] private float lookAheadSmooth = 3f;
+        [Tooltip("Velocità minima del player per attivare il look ahead (evita tremolio)")]
+        [SerializeField] private float lookAheadMinSpeed = 0.5f;
+        [Tooltip("Tempo minimo nella stessa direzione prima di attivare look ahead")]
+        [SerializeField] private float lookAheadDelay = 0.15f;
 
         private Vector3 currentVelocity;
         private Vector3 lookAheadOffset;
         private Vector3 lastTargetPosition;
+        private Vector3 smoothedMoveDirection;
+        private Vector3 lastMoveDirection;
+        private float sameDirectionTimer = 0f;
 
         private void Start()
         {
@@ -62,14 +69,62 @@ namespace CameraSystem
 
         private void UpdateLookAhead()
         {
-            if (!useLookAhead) return;
+            if (!useLookAhead)
+            {
+                lookAheadOffset = Vector3.zero;
+                lastTargetPosition = target.position;
+                return;
+            }
 
-            // Calcola la direzione del movimento del target
-            Vector3 moveDirection = (target.position - lastTargetPosition).normalized;
-            moveDirection.y = 0; // Ignora movimento verticale
+            // Calcola la velocità del movimento del target
+            Vector3 moveDelta = target.position - lastTargetPosition;
+            moveDelta.y = 0; // Ignora movimento verticale
 
-            // Smooth del look ahead
-            Vector3 targetLookAhead = moveDirection * lookAheadDistance;
+            float speed = moveDelta.magnitude / Time.deltaTime;
+            Vector3 moveDirection = moveDelta.normalized;
+
+            // Controlla se il player si sta muovendo abbastanza veloce
+            if (speed < lookAheadMinSpeed)
+            {
+                // Player fermo o troppo lento - riporta gradualmente il look ahead a zero
+                sameDirectionTimer = 0f;
+                lookAheadOffset = Vector3.Lerp(lookAheadOffset, Vector3.zero, lookAheadSmooth * Time.deltaTime);
+                lastTargetPosition = target.position;
+                return;
+            }
+
+            // Controlla se la direzione è cambiata significativamente
+            float directionDot = Vector3.Dot(moveDirection, lastMoveDirection);
+
+            if (directionDot < 0.7f) // Direzione cambiata (meno di ~45 gradi di differenza)
+            {
+                // Reset del timer - aspetta prima di applicare il nuovo look ahead
+                sameDirectionTimer = 0f;
+            }
+            else
+            {
+                // Stessa direzione - incrementa il timer
+                sameDirectionTimer += Time.deltaTime;
+            }
+
+            // Aggiorna la direzione memorizzata
+            lastMoveDirection = moveDirection;
+
+            // Applica look ahead solo se il player si muove nella stessa direzione da abbastanza tempo
+            Vector3 targetLookAhead;
+            if (sameDirectionTimer >= lookAheadDelay)
+            {
+                // Smooth della direzione per evitare scatti
+                smoothedMoveDirection = Vector3.Lerp(smoothedMoveDirection, moveDirection, lookAheadSmooth * 0.5f * Time.deltaTime);
+                targetLookAhead = smoothedMoveDirection * lookAheadDistance;
+            }
+            else
+            {
+                // Durante il delay, mantieni il look ahead corrente ma riducilo leggermente
+                targetLookAhead = lookAheadOffset * 0.95f;
+            }
+
+            // Smooth finale del look ahead
             lookAheadOffset = Vector3.Lerp(lookAheadOffset, targetLookAhead, lookAheadSmooth * Time.deltaTime);
 
             lastTargetPosition = target.position;
